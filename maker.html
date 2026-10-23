@@ -82,6 +82,8 @@ input:focus,select:focus,textarea:focus{border-color:var(--gold)}textarea{resize
     <option value="floral">1. كلاسيكي بالورود</option><option value="royal">2. ملكي فاخر</option><option value="minimal">3. عصري وبسيط</option><option value="romance">4. رومانسي ناعم</option><option value="burgundy">5. خمري فاخر</option><option value="botanical">6. أخضر طبيعي</option><option value="beach">7. تصميم بحري</option><option value="arch">8. إسلامي أنيق</option><option value="silver">9. كحلي وفضي</option><option value="terracotta">10. تيراكوتا دافئ</option><option value="ornate">11. بنفسجي مزخرف</option><option value="blackgold">12. أسود وذهبي</option>
    </select></div>
    <div class="actions"><button class="btn primary" id="download">⇩ تحميل الدعوة HTML</button><button class="btn" id="update">◉ معاينة مباشرة</button></div>
+   <div class="actions"><button class="btn primary" id="makeLink">🔗 إنشاء رابط للزبون</button></div>
+   <div class="field" id="linkBox" hidden><label for="generatedLink">رابط الدعوة الجاهز</label><input id="generatedLink" readonly dir="ltr"><div class="actions"><button class="btn primary" id="copyLink">نسخ الرابط</button><button class="btn" id="openLink">فتح الدعوة</button></div><p style="font-size:11px;color:#9eacba;line-height:1.8">ابعث هذا الرابط للزبون؛ يفتح الدعوة فقط، بدون لوحة التحكم.</p></div>
    <p style="font-size:11px;color:#9eacba;line-height:1.8">تقدر تبدّل المعلومات والتصميم قبل التحميل. الملف الناتج مستقل وما يحتاجش إنترنت لعرضه.</p>
   </div>
  </section>
@@ -157,7 +159,37 @@ function makeGallery(){const holder=$("cards");Object.entries(defs).forEach(([id
 document.querySelectorAll("input,select,textarea").forEach(el=>el.addEventListener("input",update));
 $("update").addEventListener("click",update);
 $("download").addEventListener("click",()=>{const d=read(),blob=new Blob([invitation(d)],{type:"text/html;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=`wedding-${(d.groom+"-"+d.bride).replace(/[\\/:*?"<>|]+/g,"-")}.html`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);});
-makeGallery();update();
+makeGallery();
+const params=new URLSearchParams(location.search);
+const fields={groom:"groom",bride:"bride",date:"date",time:"time",venue:"venue",phone:"phone",maps:"maps",message:"message",style:"style"};
+Object.entries(fields).forEach(([key,id])=>{if(params.has(key)&&$(id))$(id).value=params.get(key);});
+if(params.has("lang")){const radio=document.querySelector('input[name="lang"][value="'+params.get("lang")+'"]');if(radio)radio.checked=true;}
+update();
+function buildInvitationUrl(){
+ const d=read(),url=new URL(location.href);
+ url.search="";
+ url.searchParams.set("view","invite");
+ Object.entries({groom:d.groom,bride:d.bride,date:d.date,time:d.time,venue:d.venue,phone:d.phone,maps:d.maps,message:d.message,style:d.style,lang:d.lang}).forEach(([k,v])=>{if(v)url.searchParams.set(k,v);});
+ return url.href;
+}
+$("makeLink").addEventListener("click",()=>{$("generatedLink").value=buildInvitationUrl();$("linkBox").hidden=false;$("generatedLink").focus();$("generatedLink").select();});
+$("copyLink").addEventListener("click",async()=>{const input=$("generatedLink");try{await navigator.clipboard.writeText(input.value);$("copyLink").textContent="تم النسخ ✓";}catch(e){input.focus();input.select();document.execCommand("copy");$("copyLink").textContent="انسخ الرابط المحدد";}});
+$("openLink").addEventListener("click",()=>{if($("generatedLink").value)window.open($("generatedLink").value,"_blank","noopener");});
+if(params.get("view")==="invite"){
+ document.title="دعوة زفاف - "+read().groom+" و "+read().bride;
+ document.querySelector(".topbar").style.display="none";
+ document.querySelector(".workspace > section.panel:first-child").style.display="none";
+ document.querySelector(".features").style.display="none";
+ document.querySelector(".gallery").style.display="none";
+ document.querySelector(".workspace").style.display="block";
+ document.querySelector("main").style.maxWidth="700px";
+ document.querySelector("main").style.padding="0";
+ document.querySelector(".preview-panel").style.cssText="padding:0;border:0;border-radius:0;box-shadow:none;background:transparent";
+ document.querySelector(".preview-title").style.display="none";
+ document.querySelector(".preview-frame").style.borderRadius="0";
+ document.querySelector(".preview-frame iframe").style.height="100vh";
+ document.body.style.background="#fff";
+}
 </script>
 </body>
 </html>
