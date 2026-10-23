@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>صانع دعوات الزفاف الإلكترونية</title>
+<style>
+:root{--bg:#101d2b;--panel:#152538;--panel2:#1c3045;--gold:#d8ad72;--text:#f5f0e9;--muted:#b8c2ce;--line:#31475c;--purple:#8050c6}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,#101a27,#24384d);font-family:Tahoma,Arial,sans-serif;color:var(--text)}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:18px 24px;border-bottom:1px solid #415064;background:#101b28}
+.brand{color:var(--gold);font-family:Georgia,serif;font-style:italic;font-size:17px;white-space:nowrap}
+.head{text-align:center;flex:1}.head h1{font-size:clamp(19px,2.5vw,29px);margin:0 0 6px}.head p{margin:0;color:#c7cbd2;font-size:13px}
+.topbits{display:flex;gap:12px;flex-wrap:wrap;color:#c9d1dc;font-size:12px;max-width:240px}
+main{max-width:1500px;margin:auto;padding:16px}.workspace{display:grid;grid-template-columns:minmax(300px,1fr) minmax(350px,1.08fr) minmax(190px,.55fr);gap:16px;align-items:stretch}
+.panel{background:rgba(15,29,44,.82);border:1px solid #30475d;border-radius:10px;padding:18px;min-width:0;box-shadow:0 12px 35px #0002}
+h2{font-size:16px;margin:0 0 16px;display:flex;align-items:center;gap:9px}.section{padding:12px 0;border-top:1px solid var(--line)}.section:first-of-type{border-top:0;padding-top:0}
+label{display:block;font-size:12px;color:#d7dce3;margin:0 0 6px}
+input,select,textarea{width:100%;min-width:0;background:#223448;border:1px solid #536579;color:white;padding:10px;border-radius:7px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--gold)}textarea{resize:vertical;min-height:65px}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}.field{min-width:0;margin-bottom:10px}.field:last-child{margin-bottom:0}
+.radios{display:flex;gap:12px;justify-content:space-between;flex-wrap:wrap;color:#dbe2e9;font-size:12px}.radios label{display:flex;align-items:center;gap:6px;margin:0}.radios input{width:auto;accent-color:var(--gold)}
+.actions{display:flex;gap:9px;align-items:center;margin-top:14px}.btn{border:1px solid #52677d;border-radius:8px;padding:11px 14px;color:white;background:#1d3044}.btn.primary{background:var(--purple);border-color:#a889e0;flex:1}.btn:hover{filter:brightness(1.12)}
+.preview-panel{padding:12px;background:#17283a}.preview-title{display:flex;justify-content:space-between;align-items:center;padding:5px 5px 12px}.preview-title h2{margin:0}.preview-title span{font-size:11px;color:var(--gold)}
+.preview-frame{background:#e8d9c8;padding:0;border-radius:7px;overflow:hidden}.preview-frame iframe{width:100%;height:650px;display:block;border:0;background:#fff}
+.features h2{margin-bottom:5px}.feature{display:flex;align-items:center;gap:11px;padding:15px 0;border-bottom:1px solid var(--line);font-size:12px;line-height:1.7;color:#e2e7ec}.feature:last-of-type{border:0}.feature i{font-style:normal;font-size:22px;width:29px;text-align:center;color:var(--gold)}
+.slogan{color:var(--gold);font-family:Georgia,serif;text-align:center;line-height:2;font-style:italic;margin-top:18px}
+.gallery{margin-top:16px;padding:16px;background:#122235;border:1px solid #30475d;border-radius:10px}.gallery-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}.gallery-head h2{margin:0}.gallery-head span{font-size:12px;color:var(--muted)}
+.cards{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+.template{border:1px solid #42566b;background:#1a3045;border-radius:8px;padding:6px;color:white;text-align:center;min-width:0;transition:.15s}
+.template:hover,.template.active{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
+.mini{height:145px;display:flex;align-items:center;justify-content:center;padding:8px;overflow:hidden;position:relative;border:2px solid var(--ac);background:var(--paper);color:var(--ink);font-family:Georgia,serif}
+.mini:before{content:"";position:absolute;inset:5px;border:1px solid var(--ac);opacity:.8}.mini .fl{position:relative;font-size:9px;line-height:1.9;z-index:1}.mini .mn{font-size:15px;font-weight:bold;margin:6px 0;color:var(--ac)}.mini .orn{font-size:15px;color:var(--ac)}
+.template small{display:block;font-size:11px;padding:7px 1px 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:1050px){.workspace{grid-template-columns:minmax(270px,1fr) minmax(300px,1fr)}.features{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:0 18px}.features h2,.features .slogan{grid-column:1/-1}.cards{grid-template-columns:repeat(4,minmax(0,1fr))}.topbits{display:none}}
+@media(max-width:680px){.topbar{padding:14px;flex-wrap:wrap}.brand{display:none}.head{text-align:right}.workspace{grid-template-columns:1fr}.features{grid-column:auto;display:block}.preview-frame iframe{height:650px}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.mini{height:155px}main{padding:10px}.panel{padding:14px}.fields{gap:8px}}
+</style>
+</head>
+<body>
+<header class="topbar">
+ <div class="brand">دعوة مميزة .. لذكريات أجمل ♡</div>
+ <div class="head"><h1>صانع دعوات الزفاف الإلكترونية</h1><p>تصاميم فاخرة .. لمناسباتكم الخاصة</p></div>
+ <div class="topbits"><span>🌐 لغات متعددة</span><span>✧ 12 تصميمًا</span><span>♬ بدون موسيقى</span><span>↗ ملف مستقل لكل زبون</span></div>
+</header>
+<main>
+<div class="workspace">
+ <section class="panel">
+  <h2>♧ بيانات العروسين</h2>
+  <div class="section">
+   <div class="fields">
+    <div><label for="groom">اسم العريس</label><input id="groom" value="هاني"></div>
+    <div><label for="bride">اسم العروس</label><input id="bride" value="تيزيغي"></div>
+   </div>
+  </div>
+  <h2>▦ تفاصيل الحفل</h2>
+  <div class="section">
+   <div class="fields">
+    <div><label for="date">التاريخ</label><input id="date" type="date" value="2027-11-20"></div>
+    <div><label for="time">الساعة</label><input id="time" type="time" value="20:00"></div>
+   </div>
+   <div class="field"><label for="venue">مكان الحفل</label><input id="venue" value="قاعة الأفراح — وهران"></div>
+  </div>
+  <h2>↗ روابط التواصل والموقع</h2>
+  <div class="section">
+   <div class="fields">
+    <div><label for="phone">رقم واتساب</label><input id="phone" value="+213551708889" inputmode="tel"></div>
+    <div><label for="maps">رابط Google Maps</label><input id="maps" placeholder="https://maps.app.goo.gl/..."></div>
+   </div>
+   <div class="field"><label for="message">رسالة إضافية (اختياري)</label><textarea id="message" placeholder="يشرفنا حضوركم ومشاركتنا فرحتنا..."></textarea></div>
+  </div>
+  <h2>文 اللغة</h2>
+  <div class="section">
+   <div class="radios">
+    <label><input type="radio" name="lang" value="ar" checked> العربية</label>
+    <label><input type="radio" name="lang" value="fr"> Français</label>
+    <label><input type="radio" name="lang" value="en"> English</label>
+   </div>
+  </div>
+  <h2>◉ اختيار التصميم</h2>
+  <div class="section">
+   <div class="field"><label for="style">قالب الدعوة</label><select id="style">
+    <option value="floral">1. كلاسيكي بالورود</option><option value="royal">2. ملكي فاخر</option><option value="minimal">3. عصري وبسيط</option><option value="romance">4. رومانسي ناعم</option><option value="burgundy">5. خمري فاخر</option><option value="botanical">6. أخضر طبيعي</option><option value="beach">7. تصميم بحري</option><option value="arch">8. إسلامي أنيق</option><option value="silver">9. كحلي وفضي</option><option value="terracotta">10. تيراكوتا دافئ</option><option value="ornate">11. بنفسجي مزخرف</option><option value="blackgold">12. أسود وذهبي</option>
+   </select></div>
+   <div class="actions"><button class="btn primary" id="download">⇩ تحميل الدعوة HTML</button><button class="btn" id="update">◉ معاينة مباشرة</button></div>
+   <p style="font-size:11px;color:#9eacba;line-height:1.8">تقدر تبدّل المعلومات والتصميم قبل التحميل. الملف الناتج مستقل وما يحتاجش إنترنت لعرضه.</p>
+  </div>
+ </section>
+ <section class="panel preview-panel">
+  <div class="preview-title"><h2>▣ معاينة الدعوة</h2><span id="currentName">كلاسيكي بالورود</span></div>
+  <div class="preview-frame"><iframe id="preview" title="معاينة الدعوة"></iframe></div>
+ </section>
+ <aside class="panel features">
+  <h2>♧ مميزات صانع الدعوات</h2>
+  <div class="feature"><i>▧</i><span>تصميم احترافي عالي الجودة</span></div>
+  <div class="feature"><i>▣</i><span>متجاوبة مع جميع الأجهزة</span></div>
+  <div class="feature"><i>✣</i><span>تأثيرات بصرية أنيقة</span></div>
+  <div class="feature"><i>◷</i><span>عداد تنازلي للحفل</span></div>
+  <div class="feature"><i>☏</i><span>زر تأكيد الحضور عبر WhatsApp</span></div>
+  <div class="feature"><i>⌖</i><span>رابط الموقع على الخريطة</span></div>
+  <div class="feature"><i>⚙</i><span>تخصيص كامل للبيانات</span></div>
+  <div class="slogan">قالب واحد ..<br>مئات الإمكانيات ♡</div>
+ </aside>
+</div>
+<section class="gallery">
+ <div class="gallery-head"><h2>اختر من بين 12 تصميم مختلف</h2><span>اضغط على أي تصميم لتجربته في المعاينة</span></div>
+ <div class="cards" id="cards"></div>
+</section>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const defs={
+ floral:{name:"كلاسيكي بالورود",a:"#b47b42",bg:"#fff4e4",ink:"#543725",motif:"❀ ✿ ❀",deco:"flowers"},
+ royal:{name:"ملكي فاخر",a:"#d9b56e",bg:"#101d36",ink:"#fff0cc",motif:"✦ ♛ ✦",deco:"gold"},
+ minimal:{name:"عصري وبسيط",a:"#4b4b4b",bg:"#ffffff",ink:"#222222",motif:"— ✧ —",deco:"minimal"},
+ romance:{name:"رومانسي ناعم",a:"#c87891",bg:"#fff0f4",ink:"#633846",motif:"♡ ❀ ♡",deco:"rose"},
+ burgundy:{name:"خمري فاخر",a:"#e0bd77",bg:"#4b1026",ink:"#fff1d7",motif:"✦ ❦ ✦",deco:"gold"},
+ botanical:{name:"أخضر طبيعي",a:"#567b58",bg:"#f4f6e9",ink:"#2d4934",motif:"❧ ♧ ❧",deco:"leaf"},
+ beach:{name:"تصميم بحري",a:"#198b9a",bg:"#eafaff",ink:"#184a5a",motif:"≈ ☼ ≈",deco:"waves"},
+ arch:{name:"إسلامي أنيق",a:"#c5a15a",bg:"#f8f0dc",ink:"#234d43",motif:"۞ ✦ ۞",deco:"arch"},
+ silver:{name:"كحلي وفضي",a:"#c6d3e6",bg:"#101d37",ink:"#f2f5fb",motif:"✧ ✦ ✧",deco:"silver"},
+ terracotta:{name:"تيراكوتا دافئ",a:"#b9654b",bg:"#fff0e3",ink:"#60392c",motif:"❋ ❀ ❋",deco:"earth"},
+ ornate:{name:"بنفسجي مزخرف",a:"#d1b5f0",bg:"#24163a",ink:"#fff3ff",motif:"✧ ❦ ✧",deco:"purple"},
+ blackgold:{name:"أسود وذهبي",a:"#d8b45e",bg:"#101010",ink:"#fff8e7",motif:"✦ ♡ ✦",deco:"black"}
+};
+function read(){return {groom:$("groom").value.trim()||"العريس",bride:$("bride").value.trim()||"العروس",date:$("date").value,time:$("time").value,venue:$("venue").value.trim(),phone:$("phone").value.trim(),maps:$("maps").value.trim(),message:$("message").value.trim(),style:$("style").value,lang:document.querySelector('input[name="lang"]:checked').value};}
+function esc(v){return String(v||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function niceDate(v,lang){if(!v)return "";const d=new Date(v+"T12:00:00");try{return d.toLocaleDateString(lang==="ar"?"ar-DZ":lang==="fr"?"fr-FR":"en-GB",{weekday:"long",year:"numeric",month:"long",day:"numeric"});}catch(e){return v;}}
+function invitation(d){
+ const s=defs[d.style], ar=d.lang==="ar",fr=d.lang==="fr";
+ const t=ar?{title:"دعوة زفاف",intro:"بكل حب وفرح، يشرفنا دعوتكم لمشاركتنا أجمل لحظات العمر",date:"التاريخ",time:"الساعة",place:"مكان الحفل",rsvp:"تأكيد الحضور عبر واتساب",map:"الموقع على الخريطة",end:"حضوركم شرف لنا"}:fr?{title:"Invitation au mariage",intro:"Avec amour et joie, rejoignez-nous pour célébrer ce jour spécial",date:"Date",time:"Heure",place:"Lieu",rsvp:"Confirmer sur WhatsApp",map:"Voir la carte",end:"Votre présence nous est précieuse"}:{title:"Wedding Invitation",intro:"With love and joy, join us to celebrate our special day",date:"Date",time:"Time",place:"Venue",rsvp:"RSVP on WhatsApp",map:"Open map",end:"Your presence means the world to us"};
+ const phone=d.phone.replace(/\D/g,"");
+ const msg=ar?`السلام عليكم، نحب نأكد حضوري في عرس ${d.groom} و ${d.bride}.`:fr?`Bonjour, je confirme ma présence au mariage de ${d.groom} et ${d.bride}.`:`Hello, I confirm my attendance at ${d.groom} and ${d.bride}'s wedding.`;
+ const links=(phone?`<a class="btn" href="https://wa.me/${esc(phone)}?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener">${t.rsvp}</a>`:"")+(d.maps&&/^https?:\/\//i.test(d.maps)?`<a class="btn outline" href="${esc(d.maps)}" target="_blank" rel="noopener">${t.map}</a>`:"");
+ const dark=["royal","burgundy","silver","ornate","blackgold"].includes(d.style);
+ return `<!doctype html><html lang="${d.lang}" dir="${ar?"rtl":"ltr"}"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(t.title)} - ${esc(d.groom)} & ${esc(d.bride)}</title><style>
+ *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:18px;background:${s.bg};color:${s.ink};font-family:Georgia,"Times New Roman",serif;text-align:center}.card{width:min(100%,620px);min-height:630px;position:relative;overflow:hidden;padding:42px 30px;background:${s.bg};border:3px double ${s.a};box-shadow:0 12px 50px #0002;border-radius:${d.style==="arch"?"45% 45% 8px 8px / 14% 14% 8px 8px":d.style==="minimal"?"0":d.style==="romance"?"24px":"8px"}}
+ .card:before{content:"";position:absolute;inset:10px;border:1px solid ${s.a};pointer-events:none;opacity:.8}.minimal:before{display:none}.motif{font-size:27px;color:${s.a};letter-spacing:4px;margin:0 0 16px}.label{font:12px Tahoma,Arial,sans-serif;letter-spacing:2px;color:${s.a};margin-bottom:20px}.intro{font:14px/2 Tahoma,Arial,sans-serif;max-width:420px;margin:0 auto 16px}.names{font-size:clamp(32px,7vw,48px);color:${s.a};line-height:1.5;margin:14px 0;overflow-wrap:anywhere}.heart{font-size:.55em}.line{width:90px;height:1px;background:${s.a};margin:20px auto}.details{font:14px/2.2 Tahoma,Arial,sans-serif;margin:18px 0}.details strong{color:${s.a}}.countdown{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;max-width:390px;margin:20px auto}.countdown .unit{border:1px solid ${s.a}66;background:${s.a}12;border-radius:9px;padding:10px 4px}.countdown b{display:block;font:700 22px Tahoma,Arial,sans-serif;color:${s.a}}.countdown span{display:block;font:11px Tahoma,Arial,sans-serif;margin-top:5px}.message{white-space:pre-wrap;font:13px/1.8 Tahoma,Arial,sans-serif;margin:16px auto}.buttons{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin:22px 0}.btn{display:inline-block;background:${s.a};color:${s.bg};padding:11px 16px;border-radius:25px;text-decoration:none;font:12px Tahoma,Arial,sans-serif}.outline{background:transparent;border:1px solid ${s.a};color:${s.ink}}.end{font:13px Tahoma,Arial,sans-serif;margin:18px 0}.floral .flowers{position:absolute;color:${s.a};opacity:.45;font-size:62px}.floral .flowers.one{top:8px;left:8px}.floral .flowers.two{bottom:5px;right:8px}.botanical:after{content:"❧";position:absolute;top:8px;left:10px;color:${s.a};font-size:75px;opacity:.45}.waves:after{content:"≈ ≈ ≈";position:absolute;bottom:8px;left:0;right:0;color:${s.a};font-size:24px;opacity:.65}.royal .card,.blackgold .card{box-shadow:inset 0 0 0 5px ${s.bg},inset 0 0 0 6px ${s.a}}@media(max-width:430px){body{padding:8px}.card{padding:35px 20px;min-height:600px}.motif{font-size:23px}}
+ </style><body><main class="card ${d.style}"><div class="motif">${s.motif}</div><div class="label">${t.title}</div><p class="intro">${t.intro}</p><div class="names">${esc(d.groom)} <span class="heart">♥</span><br>${esc(d.bride)}</div><div class="line"></div><div class="details"><div><strong>${t.date}:</strong> ${esc(niceDate(d.date,d.lang))}</div><div><strong>${t.time}:</strong> ${esc(d.time)}</div><div><strong>${t.place}:</strong><br>${esc(d.venue)}</div></div><div class="countdown" id="countdown"><div class="unit"><b id="cd-days">--</b><span>${ar?"يوم":fr?"Jours":"Days"}</span></div><div class="unit"><b id="cd-hours">--</b><span>${ar?"ساعة":fr?"Heures":"Hours"}</span></div><div class="unit"><b id="cd-minutes">--</b><span>${ar?"دقيقة":fr?"Minutes":"Minutes"}</span></div><div class="unit"><b id="cd-seconds">--</b><span>${ar?"ثانية":fr?"Secondes":"Seconds"}</span></div></div>${d.message?`<div class="message">${esc(d.message)}</div>`:""}<div class="buttons">${links}</div><div class="end">${t.end} ♥</div><div class="motif">${s.motif}</div></main><script>
+(function(){
+ const dateValue = ${JSON.stringify(d.date)};
+ const timeValue = ${JSON.stringify(d.time || "00:00")};
+ const ids=["cd-days","cd-hours","cd-minutes","cd-seconds"];
+ const target = new Date(dateValue + "T" + timeValue + ":00").getTime();
+ function tick(){
+  const nodes=ids.map(id=>document.getElementById(id));
+  if(!Number.isFinite(target)){nodes.forEach(el=>{if(el)el.textContent="--";});return;}
+  let left=Math.max(0,target-Date.now());
+  const values=[Math.floor(left/86400000),Math.floor((left%86400000)/3600000),Math.floor((left%3600000)/60000),Math.floor((left%60000)/1000)];
+  nodes.forEach((el,i)=>{if(el)el.textContent=String(values[i]).padStart(2,"0");});
+ }
+ tick();setInterval(tick,1000);
+})();
+<\/script></body></html>`;
+}
+function update(){const d=read();$("preview").srcdoc=invitation(d);$("currentName").textContent=defs[d.style].name;document.querySelectorAll(".template").forEach(el=>el.classList.toggle("active",el.dataset.style===d.style));}
+function makeGallery(){const holder=$("cards");Object.entries(defs).forEach(([id,s],i)=>{const b=document.createElement("button");b.type="button";b.className="template";b.dataset.style=id;b.innerHTML=`<div class="mini" style="--ac:${s.a};--paper:${s.bg};--ink:${s.ink}"><div class="fl"><div class="orn">${s.motif}</div><div>دعوة زفاف</div><div class="mn">هاني ♥ تيزيغي</div><div>التاريخ · الساعة</div><div>مكان الحفل</div><div class="orn">♡ ♡ ♡</div></div></div><small>${i+1}. ${s.name}</small>`;b.addEventListener("click",()=>{$("style").value=id;update();});holder.appendChild(b);});}
+document.querySelectorAll("input,select,textarea").forEach(el=>el.addEventListener("input",update));
+$("update").addEventListener("click",update);
+$("download").addEventListener("click",()=>{const d=read(),blob=new Blob([invitation(d)],{type:"text/html;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=`wedding-${(d.groom+"-"+d.bride).replace(/[\\/:*?"<>|]+/g,"-")}.html`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);});
+makeGallery();update();
+</script>
+</body>
+</html>

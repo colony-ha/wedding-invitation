@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f6ece4">
+<title>دعوة زفاف</title>
+<style>
+:root{--gold:#b88962;--ink:#5d514b;--rose:#d9a6a0;--paper:#fffaf6}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;padding:28px 14px;display:flex;align-items:center;justify-content:center;font-family:Tahoma,Arial,sans-serif;color:var(--ink);background:radial-gradient(circle at top,#fffdfb 0,#f5e9df 62%,#ead8cc 100%);overflow-x:hidden}
+.card{position:relative;width:min(100%,560px);padding:36px 24px 28px;text-align:center;border:1px solid #d9b9a3;border-radius:28px;background:rgba(255,252,248,.95);box-shadow:0 16px 45px #8d6d5a22;overflow:hidden}
+.card:before,.card:after{content:"🌹";position:absolute;font-size:36px;opacity:.8;top:12px}
+.card:before{right:14px;transform:rotate(-18deg)}.card:after{left:14px;transform:rotate(18deg)}
+.small{color:var(--gold);letter-spacing:1px;font-size:14px;margin-top:15px}
+h1{font-size:clamp(29px,7vw,42px);margin:15px 0 8px;color:#756057}
+.names{font-size:clamp(24px,6vw,35px);color:var(--gold);margin:12px 0 20px}
+.ornament{color:var(--rose);font-size:24px;margin:14px 0}
+.message{line-height:2;font-size:16px;margin:14px auto 20px;max-width:430px}
+.details{line-height:2.3;font-size:16px;margin:12px 0}
+.countdown{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:18px 0 22px}
+.unit{min-width:72px;padding:10px 7px;background:#f8eee7;border:1px solid #ead6c8;border-radius:15px}
+.number{display:block;font-size:24px;color:var(--gold);font-weight:bold}
+.unit-label{font-size:12px;color:#82736a}
+.button{display:block;width:100%;max-width:390px;margin:10px auto;padding:13px 16px;border-radius:30px;text-decoration:none;font:inherit;font-weight:bold;cursor:pointer;border:1px solid var(--gold)}
+.primary{color:white;background:#c58e70;border-color:#c58e70}
+.secondary{color:#8b6957;background:transparent}
+.footer{font-size:12px;color:#9a8980;margin-top:20px}
+.petal{position:fixed;top:-35px;z-index:5;pointer-events:none;opacity:.82;animation:fall linear forwards}
+@keyframes fall{0%{transform:translate3d(0,-5vh,0) rotate(0);opacity:0}10%{opacity:.8}100%{transform:translate3d(var(--drift),110vh,0) rotate(540deg);opacity:0}}
+@media(prefers-reduced-motion:reduce){.petal{display:none}}
+</style>
+</head>
+<body>
+<main class="card">
+<div class="small">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيم</div>
+<h1>دعوة زفاف</h1>
+<div class="names"><span id="groom">العريس</span> <span>♥</span> <span id="bride">العروس</span></div>
+<div class="ornament">❀ ❦ ❀</div>
+<p class="message" id="message">بكل حب وفرح، يشرفنا دعوتكم لمشاركتنا أجمل أيام العمر وحضور حفل زفافنا. حضوركم يزيد فرحتنا جمالًا!</p>
+<div class="details">
+<div id="dateLine">📅 تاريخ العرس</div>
+<div id="timeLine">🕗 الساعة</div>
+<div id="venueLine">📍 قاعة الأفراح</div>
+</div>
+<div class="ornament">──────── ❀ ────────</div>
+<div class="countdown" aria-label="العد التنازلي">
+<div class="unit"><span class="number" id="days">—</span><span class="unit-label">يوم</span></div>
+<div class="unit"><span class="number" id="hours">—</span><span class="unit-label">ساعة</span></div>
+<div class="unit"><span class="number" id="minutes">—</span><span class="unit-label">دقيقة</span></div>
+<div class="unit"><span class="number" id="seconds">—</span><span class="unit-label">ثانية</span></div>
+</div>
+<a class="button primary" id="rsvp" href="#" target="_blank" rel="noopener">تأكيد الحضور عبر واتساب</a>
+<a class="button secondary" id="map" href="#" target="_blank" rel="noopener" hidden>افتح موقع القاعة في الخريطة</a>
+<div class="footer">بكل الحب، <span id="footerNames">العروسان</span> 🌹</div>
+</main>
+<script>
+(function(){
+  const p = new URLSearchParams(location.search);
+  const get = (key, fallback) => p.get(key) || fallback;
+  const setText = (id, value) => { document.getElementById(id).textContent = value; };
+  const groom = get('groom','العريس');
+  const bride = get('bride','العروس');
+  const date = get('date','');
+  const time = get('time','20:00');
+  const venue = get('venue','قاعة الأفراح');
+  const phone = get('phone','');
+  const message = get('message','بكل حب وفرح، يشرفنا دعوتكم لمشاركتنا أجمل أيام العمر وحضور حفل زفافنا. حضوركم يزيد فرحتنا جمالًا!');
+  const mapUrl = get('map','');
+  setText('groom',groom); setText('bride',bride); setText('footerNames',groom+' و '+bride); setText('message',message);
+  setText('dateLine','📅 '+(date || 'تاريخ العرس')); setText('timeLine','🕗 الساعة '+time); setText('venueLine','📍 '+venue);
+  document.title='دعوة زفاف - '+groom+' و '+bride;
+  const map = document.getElementById('map');
+  if(mapUrl){ map.href=mapUrl; map.hidden=false; } else { map.remove(); }
+  const rsvp = document.getElementById('rsvp');
+  if(phone){ rsvp.href='https://wa.me/'+phone.replace(/\D/g,'')+'?text='+encodeURIComponent('السلام عليكم، نحب نأكد حضوري في عرس '+groom+' و '+bride+'.'); }
+  else { rsvp.href='https://wa.me/?text='+encodeURIComponent('السلام عليكم، نحب نأكد حضوري في عرس '+groom+' و '+bride+'.'); }
+  const target = date ? new Date(date+'T'+(time || '00:00')+':00') : null;
+  const ids=['days','hours','minutes','seconds'];
+  function update(){
+    if(!target || Number.isNaN(target.getTime())){ ids.forEach(id=>setText(id,'—')); return; }
+    let remaining=Math.max(0,target.getTime()-Date.now());
+    const values=[Math.floor(remaining/86400000),Math.floor(remaining%86400000/3600000),Math.floor(remaining%3600000/60000),Math.floor(remaining%60000/1000)];
+    values.forEach((v,i)=>setText(ids[i],v.toLocaleString('ar-DZ')));
+  }
+  update(); setInterval(update,1000);
+  if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    function createPetal(){
+      const petal=document.createElement('span'); petal.className='petal'; petal.textContent=Math.random()>.5?'🌸':'🌹';
+      petal.style.left=Math.random()*100+'vw'; petal.style.fontSize=(13+Math.random()*14)+'px';
+      petal.style.setProperty('--drift',(Math.random()*180-90)+'px'); petal.style.animationDuration=(8+Math.random()*8)+'s';
+      document.body.appendChild(petal); setTimeout(()=>petal.remove(),17000);
+    }
+    setInterval(createPetal,1000);
+  }
+})();
+</script>
+</body>
+</html>
