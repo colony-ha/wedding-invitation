@@ -165,16 +165,62 @@ const fields={groom:"groom",bride:"bride",date:"date",time:"time",venue:"venue",
 Object.entries(fields).forEach(([key,id])=>{if(params.has(key)&&$(id))$(id).value=params.get(key);});
 if(params.has("lang")){const radio=document.querySelector('input[name="lang"][value="'+params.get("lang")+'"]');if(radio)radio.checked=true;}
 update();
-function buildInvitationUrl(){
- const d=read(),url=new URL(location.href);
+const SUPABASE_FUNCTION_URL="https://ghdjdrxbpwgjyibqiiug.supabase.co/functions/v1/invitation-api";
+const SUPABASE_PUBLISHABLE_KEY="sb_publishable_oGKbLMp2hiIxshKVsA8LEw_cLECQ00V";
+function buildInvitationUrl(slug){
+ const url=new URL(location.href);
  url.search="";
  url.searchParams.set("view","invite");
- Object.entries({groom:d.groom,bride:d.bride,date:d.date,time:d.time,venue:d.venue,phone:d.phone,maps:d.maps,message:d.message,style:d.style,lang:d.lang}).forEach(([k,v])=>{if(v)url.searchParams.set(k,v);});
+ url.searchParams.set("slug",slug);
  return url.href;
 }
-$("makeLink").addEventListener("click",()=>{$("generatedLink").value=buildInvitationUrl();$("linkBox").hidden=false;$("generatedLink").focus();$("generatedLink").select();});
+$("makeLink").addEventListener("click",async()=>{
+ const d=read();
+ const pin=prompt("أدخل رمز الإدارة الذي حفظته في Supabase (INVITATION_ADMIN_PIN):");
+ if(!pin)return;
+ const button=$("makeLink"),original=button.textContent;
+ button.disabled=true;button.textContent="جارٍ حفظ الدعوة…";
+ try{
+  const response=await fetch(SUPABASE_FUNCTION_URL,{
+   method:"POST",
+   headers:{
+    "Content-Type":"application/json",
+    "apikey":SUPABASE_PUBLISHABLE_KEY,
+    "Authorization":"Bearer "+SUPABASE_PUBLISHABLE_KEY,
+    "x-admin-pin":pin
+   },
+   body:JSON.stringify(d)
+  });
+  const result=await response.json().catch(()=>({}));
+  if(!response.ok||!result.slug)throw new Error(result.error||("فشل الحفظ ("+response.status+")"));
+  $("generatedLink").value=buildInvitationUrl(result.slug);
+  $("linkBox").hidden=false;
+  $("generatedLink").focus();$("generatedLink").select();
+ }catch(error){
+  alert("ما قدرناش نحفظو الدعوة: "+(error.message||"خطأ في الاتصال")+". تأكد من إعدادات الدالة وحاول مجددًا.");
+ }finally{button.disabled=false;button.textContent=original;}
+});
 $("copyLink").addEventListener("click",async()=>{const input=$("generatedLink");try{await navigator.clipboard.writeText(input.value);$("copyLink").textContent="تم النسخ ✓";}catch(e){input.focus();input.select();document.execCommand("copy");$("copyLink").textContent="انسخ الرابط المحدد";}});
 $("openLink").addEventListener("click",()=>{if($("generatedLink").value)window.open($("generatedLink").value,"_blank","noopener");});
+if(params.get("slug")){
+ (async()=>{
+  try{
+   const response=await fetch(SUPABASE_FUNCTION_URL+"?slug="+encodeURIComponent(params.get("slug")),{
+    headers:{"apikey":SUPABASE_PUBLISHABLE_KEY,"Authorization":"Bearer "+SUPABASE_PUBLISHABLE_KEY}
+   });
+   const result=await response.json();
+   if(!response.ok||!result.invitation)throw new Error(result.error||"تعذر تحميل الدعوة");
+   const d=result.invitation;
+   const values={groom:d.groom,bride:d.bride,date:d.wedding_date,time:(d.wedding_time||"").slice(0,5),venue:d.venue,phone:d.phone||"",maps:d.map_url||"",message:d.message||"",style:d.style||"floral"};
+   Object.entries(values).forEach(([key,value])=>{if($(key))$(key).value=value;});
+   const radio=document.querySelector('input[name="lang"][value="'+(d.language||"ar")+'"]');
+   if(radio)radio.checked=true;
+   update();
+  }catch(error){
+   document.querySelector(".preview-frame").innerHTML="<p style='padding:30px;text-align:center;color:#333'>تعذر تحميل الدعوة. تحقق من الرابط أو حاول لاحقًا.</p>";
+  }
+ })();
+}
 if(params.get("view")==="invite"){
  document.title="دعوة زفاف - "+read().groom+" و "+read().bride;
  document.querySelector(".topbar").style.display="none";
