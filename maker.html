@@ -40,10 +40,10 @@ input:focus,select:focus,textarea:focus{border-color:var(--gold)}textarea{resize
 <header class="topbar">
  <div class="brand">دعوة مميزة .. لذكريات أجمل ♡</div>
  <div class="head"><h1>صانع دعوات الزفاف الإلكترونية</h1><p>تصاميم فاخرة .. لمناسباتكم الخاصة</p></div>
- <div class="topbits"><span>🌐 لغات متعددة</span><span>✧ 12 تصميمًا</span><span>♬ بدون موسيقى</span><span>↗ ملف مستقل لكل زبون</span></div>
+ <div class="topbits"><span>🌐 لغات متعددة</span><span>✧ 12 تصميمًا</span><span>♬ بدون موسيقى</span><span>↗ روابط سحابية قصيرة</span></div>
 </header>
 <main>
-<div class="workspace">
+<div class="workspace" id="builderView">
  <section class="panel">
   <h2>♧ بيانات العروسين</h2>
   <div class="section">
@@ -83,8 +83,8 @@ input:focus,select:focus,textarea:focus{border-color:var(--gold)}textarea{resize
    </select></div>
    <div class="actions"><button class="btn primary" id="download">⇩ تحميل الدعوة HTML</button><button class="btn" id="update">◉ معاينة مباشرة</button></div>
    <div class="actions"><button class="btn primary" id="makeLink">🔗 إنشاء رابط للزبون</button></div>
-   <div class="field" id="linkBox" hidden><label for="generatedLink">رابط الدعوة الجاهز</label><input id="generatedLink" readonly dir="ltr"><div class="actions"><button class="btn primary" id="copyLink">نسخ الرابط</button><button class="btn" id="openLink">فتح الدعوة</button></div><p style="font-size:11px;color:#9eacba;line-height:1.8">ابعث هذا الرابط للزبون؛ يفتح الدعوة فقط، بدون لوحة التحكم.</p></div>
-   <p style="font-size:11px;color:#9eacba;line-height:1.8">تقدر تبدّل المعلومات والتصميم قبل التحميل. الملف الناتج مستقل وما يحتاجش إنترنت لعرضه.</p>
+   <div class="field" id="linkBox" hidden><label for="generatedLink">رابط الدعوة الجاهز</label><input id="generatedLink" readonly dir="ltr"><div class="actions"><button class="btn primary" id="copyLink">نسخ الرابط</button><button class="btn" id="openLink">فتح الدعوة</button></div><p style="font-size:11px;color:#9eacba;line-height:1.8">رابط قصير وسحابي باسم الدومين الخاص بك، ابعثه للزبون.</p></div>
+   <p style="font-size:11px;color:#9eacba;line-height:1.8">تقدر تبدّل المعلومات والتصميم قبل إنشاء الرابط.</p>
   </div>
  </section>
  <section class="panel preview-panel">
@@ -103,40 +103,41 @@ input:focus,select:focus,textarea:focus{border-color:var(--gold)}textarea{resize
   <div class="slogan">قالب واحد ..<br>مئات الإمكانيات ♡</div>
  </aside>
 </div>
-<section class="gallery">
+<section class="gallery" id="galleryView">
  <div class="gallery-head"><h2>اختر من بين 12 تصميم مختلف</h2><span>اضغط على أي تصميم لتجربته في المعاينة</span></div>
  <div class="cards" id="cards"></div>
 </section>
 </main>
 <script>
+const API_KEY = '$2a$10$dei7GONK.tJ99hzXvzHmYuSHFIZB4mXuqYoRtD.BhkqMkQmgJYyYa';
 const $=id=>document.getElementById(id);
 const defs={
- floral:{name:"كلاسيكي بالورود",a:"#b47b42",bg:"#fff4e4",ink:"#543725",motif:"❀ ✿ ❀",deco:"flowers"},
- royal:{name:"ملكي فاخر",a:"#d9b56e",bg:"#101d36",ink:"#fff0cc",motif:"✦ ♛ ✦",deco:"gold"},
- minimal:{name:"عصري وبسيط",a:"#4b4b4b",bg:"#ffffff",ink:"#222222",motif:"— ✧ —",deco:"minimal"},
- romance:{name:"رومانسي ناعم",a:"#c87891",bg:"#fff0f4",ink:"#633846",motif:"♡ ❀ ♡",deco:"rose"},
- burgundy:{name:"خمري فاخر",a:"#e0bd77",bg:"#4b1026",ink:"#fff1d7",motif:"✦ ❦ ✦",deco:"gold"},
- botanical:{name:"أخضر طبيعي",a:"#567b58",bg:"#f4f6e9",ink:"#2d4934",motif:"❧ ♧ ❧",deco:"leaf"},
- beach:{name:"تصميم بحري",a:"#198b9a",bg:"#eafaff",ink:"#184a5a",motif:"≈ ☼ ≈",deco:"waves"},
- arch:{name:"إسلامي أنيق",a:"#c5a15a",bg:"#f8f0dc",ink:"#234d43",motif:"۞ ✦ ۞",deco:"arch"},
- silver:{name:"كحلي وفضي",a:"#c6d3e6",bg:"#101d37",ink:"#f2f5fb",motif:"✧ ✦ ✧",deco:"silver"},
- terracotta:{name:"تيراكوتا دافئ",a:"#b9654b",bg:"#fff0e3",ink:"#60392c",motif:"❋ ❀ ❋",deco:"earth"},
- ornate:{name:"بنفسجي مزخرف",a:"#d1b5f0",bg:"#24163a",ink:"#fff3ff",motif:"✧ ❦ ✧",deco:"purple"},
- blackgold:{name:"أسود وذهبي",a:"#d8b45e",bg:"#101010",ink:"#fff8e7",motif:"✦ ♡ ✦",deco:"black"}
+ floral:{name:"كلاسيكي بالورود",a:"#b47b42",bg:"#fff4e4",ink:"#543725",motif:"❀ ✿ ❀"},
+ royal:{name:"ملكي فاخر",a:"#d9b56e",bg:"#101d36",ink:"#fff0cc",motif:"✦ ♛ ✦"},
+ minimal:{name:"عصري وبسيط",a:"#4b4b4b",bg:"#ffffff",ink:"#222222",motif:"— ✧ —"},
+ romance:{name:"رومانسي ناعم",a:"#c87891",bg:"#fff0f4",ink:"#633846",motif:"♡ ❀ ♡"},
+ burgundy:{name:"خمري فاخر",a:"#e0bd77",bg:"#4b1026",ink:"#fff1d7",motif:"✦ ❦ ✦"},
+ botanical:{name:"أخضر طبيعي",a:"#567b58",bg:"#f4f6e9",ink:"#2d4934",motif:"❧ ♧ ❧"},
+ beach:{name:"تصميم بحري",a:"#198b9a",bg:"#eafaff",ink:"#184a5a",motif:"≈ ☼ ≈"},
+ arch:{name:"إسلامي أنيق",a:"#c5a15a",bg:"#f8f0dc",ink:"#234d43",motif:"۞ ✦ ۞"},
+ silver:{name:"كحلي وفضي",a:"#c6d3e6",bg:"#101d37",ink:"#f2f5fb",motif:"✧ ✦ ✧"},
+ terracotta:{name:"تيراكوتا دافئ",a:"#b9654b",bg:"#fff0e3",ink:"#60392c",motif:"❋ ❀ ❋"},
+ ornate:{name:"بنفسجي مزخرف",a:"#d1b5f0",bg:"#24163a",ink:"#fff3ff",motif:"✧ ❦ ✧"},
+ blackgold:{name:"أسود وذهبي",a:"#d8b45e",bg:"#101010",ink:"#fff8e7",motif:"✦ ♡ ✦"}
 };
 function read(){return {groom:$("groom").value.trim()||"العريس",bride:$("bride").value.trim()||"العروس",date:$("date").value,time:$("time").value,venue:$("venue").value.trim(),phone:$("phone").value.trim(),maps:$("maps").value.trim(),message:$("message").value.trim(),style:$("style").value,lang:document.querySelector('input[name="lang"]:checked').value};}
 function esc(v){return String(v||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function niceDate(v,lang){if(!v)return "";const d=new Date(v+"T12:00:00");try{return d.toLocaleDateString(lang==="ar"?"ar-DZ":lang==="fr"?"fr-FR":"en-GB",{weekday:"long",year:"numeric",month:"long",day:"numeric"});}catch(e){return v;}}
+
 function invitation(d){
- const s=defs[d.style], ar=d.lang==="ar",fr=d.lang==="fr";
+ const s=defs[d.style]||defs.floral, ar=d.lang==="ar",fr=d.lang==="fr";
  const t=ar?{title:"دعوة زفاف",intro:"بكل حب وفرح، يشرفنا دعوتكم لمشاركتنا أجمل لحظات العمر",date:"التاريخ",time:"الساعة",place:"مكان الحفل",rsvp:"تأكيد الحضور عبر واتساب",map:"الموقع على الخريطة",end:"حضوركم شرف لنا"}:fr?{title:"Invitation au mariage",intro:"Avec amour et joie, rejoignez-nous pour célébrer ce jour spécial",date:"Date",time:"Heure",place:"Lieu",rsvp:"Confirmer sur WhatsApp",map:"Voir la carte",end:"Votre présence nous est précieuse"}:{title:"Wedding Invitation",intro:"With love and joy, join us to celebrate our special day",date:"Date",time:"Time",place:"Venue",rsvp:"RSVP on WhatsApp",map:"Open map",end:"Your presence means the world to us"};
  const phone=d.phone.replace(/\D/g,"");
  const msg=ar?`السلام عليكم، نحب نأكد حضوري في عرس ${d.groom} و ${d.bride}.`:fr?`Bonjour, je confirme ma présence au mariage de ${d.groom} et ${d.bride}.`:`Hello, I confirm my attendance at ${d.groom} and ${d.bride}'s wedding.`;
  const links=(phone?`<a class="btn" href="https://wa.me/${esc(phone)}?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener">${t.rsvp}</a>`:"")+(d.maps&&/^https?:\/\//i.test(d.maps)?`<a class="btn outline" href="${esc(d.maps)}" target="_blank" rel="noopener">${t.map}</a>`:"");
- const dark=["royal","burgundy","silver","ornate","blackgold"].includes(d.style);
  return `<!doctype html><html lang="${d.lang}" dir="${ar?"rtl":"ltr"}"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(t.title)} - ${esc(d.groom)} & ${esc(d.bride)}</title><style>
  *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:18px;background:${s.bg};color:${s.ink};font-family:Georgia,"Times New Roman",serif;text-align:center}.card{width:min(100%,620px);min-height:630px;position:relative;overflow:hidden;padding:42px 30px;background:${s.bg};border:3px double ${s.a};box-shadow:0 12px 50px #0002;border-radius:${d.style==="arch"?"45% 45% 8px 8px / 14% 14% 8px 8px":d.style==="minimal"?"0":d.style==="romance"?"24px":"8px"}}
- .card:before{content:"";position:absolute;inset:10px;border:1px solid ${s.a};pointer-events:none;opacity:.8}.minimal:before{display:none}.motif{font-size:27px;color:${s.a};letter-spacing:4px;margin:0 0 16px}.label{font:12px Tahoma,Arial,sans-serif;letter-spacing:2px;color:${s.a};margin-bottom:20px}.intro{font:14px/2 Tahoma,Arial,sans-serif;max-width:420px;margin:0 auto 16px}.names{font-size:clamp(32px,7vw,48px);color:${s.a};line-height:1.5;margin:14px 0;overflow-wrap:anywhere}.heart{font-size:.55em}.line{width:90px;height:1px;background:${s.a};margin:20px auto}.details{font:14px/2.2 Tahoma,Arial,sans-serif;margin:18px 0}.details strong{color:${s.a}}.countdown{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;max-width:390px;margin:20px auto}.countdown .unit{border:1px solid ${s.a}66;background:${s.a}12;border-radius:9px;padding:10px 4px}.countdown b{display:block;font:700 22px Tahoma,Arial,sans-serif;color:${s.a}}.countdown span{display:block;font:11px Tahoma,Arial,sans-serif;margin-top:5px}.message{white-space:pre-wrap;font:13px/1.8 Tahoma,Arial,sans-serif;margin:16px auto}.buttons{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin:22px 0}.btn{display:inline-block;background:${s.a};color:${s.bg};padding:11px 16px;border-radius:25px;text-decoration:none;font:12px Tahoma,Arial,sans-serif}.outline{background:transparent;border:1px solid ${s.a};color:${s.ink}}.end{font:13px Tahoma,Arial,sans-serif;margin:18px 0}.floral .flowers{position:absolute;color:${s.a};opacity:.45;font-size:62px}.floral .flowers.one{top:8px;left:8px}.floral .flowers.two{bottom:5px;right:8px}.botanical:after{content:"❧";position:absolute;top:8px;left:10px;color:${s.a};font-size:75px;opacity:.45}.waves:after{content:"≈ ≈ ≈";position:absolute;bottom:8px;left:0;right:0;color:${s.a};font-size:24px;opacity:.65}.royal .card,.blackgold .card{box-shadow:inset 0 0 0 5px ${s.bg},inset 0 0 0 6px ${s.a}}@media(max-width:430px){body{padding:8px}.card{padding:35px 20px;min-height:600px}.motif{font-size:23px}}
+ .card:before{content:"";position:absolute;inset:10px;border:1px solid ${s.a};pointer-events:none;opacity:.8}.minimal:before{display:none}.motif{font-size:27px;color:${s.a};letter-spacing:4px;margin:0 0 16px}.label{font:12px Tahoma,Arial,sans-serif;letter-spacing:2px;color:${s.a};margin-bottom:20px}.intro{font:14px/2 Tahoma,Arial,sans-serif;max-width:420px;margin:0 auto 16px}.names{font-size:clamp(32px,7vw,48px);color:${s.a};line-height:1.5;margin:14px 0;overflow-wrap:anywhere}.heart{font-size:.55em}.line{width:90px;height:1px;background:${s.a};margin:20px auto}.details{font:14px/2.2 Tahoma,Arial,sans-serif;margin:18px 0}.details strong{color:${s.a}}.countdown{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;max-width:390px;margin:20px auto}.countdown .unit{border:1px solid ${s.a}66;background:${s.a}12;border-radius:9px;padding:10px 4px}.countdown b{display:block;font:700 22px Tahoma,Arial,sans-serif;color:${s.a}}.countdown span{display:block;font:11px Tahoma,Arial,sans-serif;margin-top:5px}.message{white-space:pre-wrap;font:13px/1.8 Tahoma,Arial,sans-serif;margin:16px auto}.buttons{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin:22px 0}.btn{display:inline-block;background:${s.a};color:${s.bg};padding:11px 16px;border-radius:25px;text-decoration:none;font:12px Tahoma,Arial,sans-serif}.outline{background:transparent;border:1px solid ${s.a};color:${s.ink}}.end{font:13px Tahoma,Arial,sans-serif;margin:18px 0}@media(max-width:430px){body{padding:8px}.card{padding:35px 20px;min-height:600px}.motif{font-size:23px}}
  </style><body><main class="card ${d.style}"><div class="motif">${s.motif}</div><div class="label">${t.title}</div><p class="intro">${t.intro}</p><div class="names">${esc(d.groom)} <span class="heart">♥</span><br>${esc(d.bride)}</div><div class="line"></div><div class="details"><div><strong>${t.date}:</strong> ${esc(niceDate(d.date,d.lang))}</div><div><strong>${t.time}:</strong> ${esc(d.time)}</div><div><strong>${t.place}:</strong><br>${esc(d.venue)}</div></div><div class="countdown" id="countdown"><div class="unit"><b id="cd-days">--</b><span>${ar?"يوم":fr?"Jours":"Days"}</span></div><div class="unit"><b id="cd-hours">--</b><span>${ar?"ساعة":fr?"Heures":"Hours"}</span></div><div class="unit"><b id="cd-minutes">--</b><span>${ar?"دقيقة":fr?"Minutes":"Minutes"}</span></div><div class="unit"><b id="cd-seconds">--</b><span>${ar?"ثانية":fr?"Secondes":"Seconds"}</span></div></div>${d.message?`<div class="message">${esc(d.message)}</div>`:""}<div class="buttons">${links}</div><div class="end">${t.end} ♥</div><div class="motif">${s.motif}</div></main><script>
 (function(){
  const dateValue = ${JSON.stringify(d.date)};
@@ -154,57 +155,107 @@ function invitation(d){
 })();
 <\/script></body></html>`;
 }
-function update(){const d=read();$("preview").srcdoc=invitation(d);$("currentName").textContent=defs[d.style].name;document.querySelectorAll(".template").forEach(el=>el.classList.toggle("active",el.dataset.style===d.style));}
-function makeGallery(){const holder=$("cards");Object.entries(defs).forEach(([id,s],i)=>{const b=document.createElement("button");b.type="button";b.className="template";b.dataset.style=id;b.innerHTML=`<div class="mini" style="--ac:${s.a};--paper:${s.bg};--ink:${s.ink}"><div class="fl"><div class="orn">${s.motif}</div><div>دعوة زفاف</div><div class="mn">هاني ♥ تيزيغي</div><div>التاريخ · الساعة</div><div>مكان الحفل</div><div class="orn">♡ ♡ ♡</div></div></div><small>${i+1}. ${s.name}</small>`;b.addEventListener("click",()=>{$("style").value=id;update();});holder.appendChild(b);});}
+
+function update(){
+    const d=read();
+    $("preview").srcdoc=invitation(d);
+    const def = defs[d.style];
+    $("currentName").textContent = def ? def.name : "";
+    document.querySelectorAll(".template").forEach(el=>el.classList.toggle("active",el.dataset.style===d.style));
+}
+
+function makeGallery(){
+    const holder=$("cards");
+    Object.entries(defs).forEach(([id,s],i)=>{
+        const b=document.createElement("button");
+        b.type="button";b.className="template";b.dataset.style=id;
+        b.innerHTML=`<div class="mini" style="--ac:${s.a};--paper:${s.bg};--ink:${s.ink}"><div class="fl"><div class="orn">${s.motif}</div><div>دعوة زفاف</div><div class="mn">هاني ♥ تيزيغي</div><div>التاريخ · الساعة</div><div>مكان الحفل</div><div class="orn">♡ ♡ ♡</div></div></div><small>${i+1}. ${s.name}</small>`;
+        b.addEventListener("click",()=>{$("style").value=id;update();});
+        holder.appendChild(b);
+    });
+}
+
 document.querySelectorAll("input,select,textarea").forEach(el=>el.addEventListener("input",update));
 $("update").addEventListener("click",update);
-$("download").addEventListener("click",()=>{const d=read(),blob=new Blob([invitation(d)],{type:"text/html;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=`wedding-${(d.groom+"-"+d.bride).replace(/[\\/:*?"<>|]+/g,"-")}.html`;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);});
-makeGallery();
-const params=new URLSearchParams(location.search);
-const fields={groom:"groom",bride:"bride",date:"date",time:"time",venue:"venue",phone:"phone",maps:"maps",message:"message",style:"style"};
-Object.entries(fields).forEach(([key,id])=>{if(params.has(key)&&$(id))$(id).value=params.get(key);});
-if(params.has("lang")){const radio=document.querySelector('input[name="lang"][value="'+params.get("lang")+'"]');if(radio)radio.checked=true;}
-update();
-function buildInvitationUrl(d){
- const url=new URL(location.href);
- url.search="";
- url.searchParams.set("view","invite");
- for(const key of ["groom","bride","date","time","venue","phone","maps","message","style","lang"]){
-  if(d[key]) url.searchParams.set(key,d[key]);
- }
- return url.href;
-}
-$("makeLink").addEventListener("click",()=>{
- const d=read();
- const button=$("makeLink"),original=button.textContent;
- $("generatedLink").value=buildInvitationUrl(d);
- $("linkBox").hidden=false;
- $("generatedLink").focus();$("generatedLink").select();
- button.textContent="تم إنشاء الرابط ✓";
- setTimeout(()=>{button.textContent=original;},1800);
-});
-$("copyLink").addEventListener("click",async()=>{
- const input=$("generatedLink");
- try{await navigator.clipboard.writeText(input.value);$("copyLink").textContent="تم النسخ ✓";}
- catch(e){input.focus();input.select();document.execCommand("copy");$("copyLink").textContent="انسخ الرابط المحدد";}
-});
-$("openLink").addEventListener("click",()=>{if($("generatedLink").value)window.open($("generatedLink").value,"_blank","noopener");});
 
-if(params.get("view")==="invite"){
- document.title="دعوة زفاف - "+read().groom+" و "+read().bride;
- document.querySelector(".topbar").style.display="none";
- document.querySelector(".workspace > section.panel:first-child").style.display="none";
- document.querySelector(".features").style.display="none";
- document.querySelector(".gallery").style.display="none";
- document.querySelector(".workspace").style.display="block";
- document.querySelector("main").style.maxWidth="700px";
- document.querySelector("main").style.padding="0";
- document.querySelector(".preview-panel").style.cssText="padding:0;border:0;border-radius:0;box-shadow:none;background:transparent";
- document.querySelector(".preview-title").style.display="none";
- document.querySelector(".preview-frame").style.borderRadius="0";
- document.querySelector(".preview-frame iframe").style.height="100vh";
- document.body.style.background="#fff";
+$("download").addEventListener("click",()=>{
+    const d=read(),blob=new Blob([invitation(d)],{type:"text/html;charset=utf-8"}),url=URL.createObjectURL(blob),a=document.createElement("a");
+    a.href=url;a.download=`wedding-${(d.groom+"-"+d.bride).replace(/[\\/:*?"<>|]+/g,"-")}.html`;
+    document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+});
+
+makeGallery();
+update();
+
+// جلب البيانات من JSONbin عند فتح رابط قصير يحتوي على ID
+const params=new URLSearchParams(location.search);
+if(params.has("id")){
+    const binId=params.get("id");
+    fetch('https://api.jsonbin.io/v3/b/'+binId+'/latest')
+        .then(r=>r.json())
+        .then(res=>{
+            if(res && res.record){
+                const d=res.record;
+                // تعبئة الحقول للاحتياط
+                Object.keys(d).forEach(k=>{if($(k))$(k).value=d[k];});
+                if(d.style && $("style")) $("style").value=d.style;
+                if(d.lang){
+                    const r=document.querySelector('input[name="lang"][value="'+d.lang+'"]');
+                    if(r) r.checked=true;
+                }
+                // عرض الدعوة مباشرة بملء الشاشة للزبون
+                document.open();
+                document.write(invitation(d));
+                document.close();
+            }
+        })
+        .catch(err=>console.error("Error loading invite"));
 }
+
+// إنشاء رابط قصير سحابي عبر JSONbin
+$("makeLink").addEventListener("click",async()=>{
+    const d=read();
+    const btn=$("makeLink");
+    const origText=btn.textContent;
+    btn.disabled=true;
+    btn.textContent='⏳ جاري إنشاء الرابط...';
+
+    try{
+        const res=await fetch('https://api.jsonbin.io/v3/b',{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json',
+                'X-Master-Key':API_KEY,
+                'X-Bin-Private':'false'
+            },
+            body:JSON.stringify(d)
+        });
+        if(!res.ok) throw new Error('API Error');
+        const json=await res.json();
+        const binId=json.metadata.id;
+
+        const shortUrl=new URL('./',location.href);
+        shortUrl.search='?id='+binId;
+        $("generatedLink").value=shortUrl.href;
+        $("linkBox").hidden=false;
+        $("generatedLink").focus();
+        $("generatedLink").select();
+        btn.textContent="تم إنشاء الرابط ✓";
+    }catch(err){
+        alert('حدث خطأ أثناء الاتصال بالسحابة، تأكد من الإنترنت وحاول مرة أخرى.');
+    }finally{
+        btn.disabled=false;
+        setTimeout(()=>{btn.textContent=origText;},1800);
+    }
+});
+
+$("copyLink").addEventListener("click",async()=>{
+    const input=$("generatedLink");
+    try{await navigator.clipboard.writeText(input.value);$("copyLink").textContent="تم النسخ ✓";}
+    catch(e){input.focus();input.select();document.execCommand("copy");$("copyLink").textContent="انسخ الرابط المحدد";}
+});
+
+$("openLink").addEventListener("click",()=>{if($("generatedLink").value)window.open($("generatedLink").value,"_blank","noopener");});
 </script>
 </body>
 </html>
