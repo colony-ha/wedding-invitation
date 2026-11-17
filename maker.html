@@ -168,7 +168,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--gold)}textarea{resize
 
 <div class="actions"><button class="btn primary" id="makeLink">🔗 إنشاء رابط للزبون</button></div>
 
-<div class="field" id="linkBox" hidden><label for="generatedLink">رابط الدعوة الجاهز</label><input id="generatedLink" readonly dir="ltr"><div class="actions"><button class="btn primary" id="copyLink">نسخ الرابط</button><button class="btn" id="openLink">فتح الدعوة</button></div><p style="font-size:11px;color:#9eacba;line-height:1.8">ابعث هذا الرابط للزبون؛ يفتح الدعوة فقط، بدون لوحة التحكم.</p></div>
+<div class="field" id="linkBox" hidden><label for="generatedLink">رابط الدعوة الجاهز</label><input id="generatedLink" readonly dir="ltr"><p id="linkStatus" style="font-size:11px;color:#d8ad72;line-height:1.8"></p><div class="actions"><button class="btn primary" id="copyLink">نسخ الرابط</button><button class="btn" id="openLink">فتح الدعوة</button></div><p style="font-size:11px;color:#9eacba;line-height:1.8">ابعث هذا الرابط للزبون؛ يفتح الدعوة فقط، بدون لوحة التحكم.</p></div>
 
 <p style="font-size:11px;color:#9eacba;line-height:1.8">تقدر تبدّل المعلومات والتصميم قبل التحميل. الملف الناتج مستقل وما يحتاجش إنترنت لعرضه.</p>
 
@@ -373,8 +373,24 @@ try{
   url.searchParams.set("view","invite");
   url.searchParams.set("id",result.id);
 
-  $("generatedLink").value=url.href;
+  const longUrl=url.href;
+  let finalUrl=longUrl;
+  const status=$("linkStatus");
+  status.textContent="تم حفظ الدعوة. جاري اختصار الرابط...";
   $("linkBox").hidden=false;
+
+  try{
+    const shortResponse=await fetch("https://is.gd/create.php?format=json&url="+encodeURIComponent(longUrl));
+    if(!shortResponse.ok) throw new Error("تعذر الاتصال بخدمة الاختصار");
+    const shortResult=await shortResponse.json();
+    if(shortResult.errorcode || !shortResult.shorturl) throw new Error(shortResult.errormessage || "تعذر اختصار الرابط");
+    finalUrl=shortResult.shorturl;
+    status.textContent="تم حفظ الدعوة واختصار الرابط بنجاح ✓";
+  }catch(shortError){
+    status.textContent="تم حفظ الدعوة، لكن تعذر الاختصار التلقائي. استعمل الرابط الطويل أو اختصره يدوياً عبر is.gd.";
+  }
+
+  $("generatedLink").value=finalUrl;
   $("generatedLink").focus();
   $("generatedLink").select();
   button.textContent="تم حفظ الدعوة وإنشاء الرابط ✓";
