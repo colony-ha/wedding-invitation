@@ -350,21 +350,41 @@ return url.href;
 
 }
 
-$("makeLink").addEventListener("click",()=>{
+const API_BASE="https://wedding-api.colonyus666.workers.dev";
+
+$("makeLink").addEventListener("click",async()=>{
 
 const d=read();
-
 const button=$("makeLink"),original=button.textContent;
+button.disabled=true;
+button.textContent="جاري حفظ الدعوة...";
 
-$("generatedLink").value=buildInvitationUrl(d);
+try{
+  const response=await fetch(API_BASE+"/api/invitations",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(d)
+  });
+  const result=await response.json();
+  if(!response.ok || !result.id) throw new Error(result.error || "تعذر حفظ الدعوة");
 
-$("linkBox").hidden=false;
+  const url=new URL(location.href);
+  url.search="";
+  url.searchParams.set("view","invite");
+  url.searchParams.set("id",result.id);
 
-$("generatedLink").focus();$("generatedLink").select();
-
-button.textContent="تم إنشاء الرابط ✓";
-
-setTimeout(()=>{button.textContent=original;},1800);
+  $("generatedLink").value=url.href;
+  $("linkBox").hidden=false;
+  $("generatedLink").focus();
+  $("generatedLink").select();
+  button.textContent="تم حفظ الدعوة وإنشاء الرابط ✓";
+}catch(error){
+  alert("ما قدرناش نحفظ الدعوة. تحقق من الاتصال ثم أعد المحاولة.\\n"+error.message);
+  button.textContent="فشل الحفظ — أعد المحاولة";
+}finally{
+  button.disabled=false;
+  setTimeout(()=>{button.textContent=original;},3000);
+}
 
 });
 
@@ -384,7 +404,30 @@ $("openLink").addEventListener("click",()=>{if($("generatedLink").value)window.o
 
 if(params.get("view")==="invite"){
 
-document.title="دعوة زفاف - "+read().groom+" و "+read().bride;
+document.title="دعوة زفاف";
+
+if(params.has("id")){
+  (async()=>{
+    try{
+      const response=await fetch(API_BASE+"/api/invitations/"+encodeURIComponent(params.get("id")));
+      const result=await response.json();
+      if(!response.ok) throw new Error(result.error || "الدعوة غير متاحة أو انتهت صلاحيتها");
+      const saved=result.invitation || result;
+      const ids={groom:"groom",bride:"bride",date:"date",time:"time",venue:"venue",phone:"phone",maps:"maps",message:"message",style:"style"};
+      Object.entries(ids).forEach(([key,id])=>{if(saved[key]!==undefined && $(id)) $(id).value=saved[key];});
+      if(saved.lang){
+        const radio=document.querySelector('input[name="lang"][value="'+saved.lang+'"]');
+        if(radio) radio.checked=true;
+      }
+      document.title="دعوة زفاف - "+(saved.groom||"")+" و "+(saved.bride||"");
+      update();
+    }catch(error){
+      document.querySelector(".preview-frame").innerHTML='<div style="padding:40px 20px;text-align:center;color:#333;font-family:Tahoma,Arial,sans-serif;line-height:2"><h2>تعذر فتح الدعوة</h2><p>'+esc(error.message)+'</p><p>قد يكون الرابط غير صحيح أو انتهت صلاحيته.</p></div>';
+    }
+  })();
+}else{
+  document.title="دعوة زفاف - "+read().groom+" و "+read().bride;
+}
 
 document.querySelector(".topbar").style.display="none";
 
