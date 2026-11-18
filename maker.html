@@ -512,19 +512,20 @@ if(params.has("id")){
   document.querySelector(".preview-panel").style.display="block";
   document.querySelector(".gallery").style.display="none";
 }else{
-  /* Public demo without an invitation ID: show all 12 designs */
-  document.querySelector(".workspace").style.display="none";
-  document.querySelector(".gallery").style.display="block";
-  document.querySelector(".gallery").style.maxWidth="760px";
-  document.querySelector(".gallery").style.margin="18px auto";
-  document.querySelector(".gallery").style.padding="18px";
-  document.querySelector(".gallery").style.background="#101b29";
-  document.querySelector(".gallery").style.border="1px solid #b88b43";
-  document.querySelector(".gallery").style.borderRadius="14px";
-  document.querySelector(".gallery-head").style.display="block";
-  document.querySelector(".gallery-head").style.textAlign="center";
-  document.querySelector(".gallery-head h2").textContent="اكتشف 12 تصميماً مختلفاً لدعوات الزفاف";
-  document.querySelector(".gallery-head span").textContent="12 نمطاً متنوعاً لتختار منها ما يناسب ذوقك";
+  /* Order preview without a saved ID: show only the chosen design */
+  document.querySelector(".workspace").style.display="block";
+  document.querySelector(".workspace").style.gridTemplateColumns="1fr";
+  document.querySelector(".preview-panel").style.display="block";
+  document.querySelector(".gallery").style.display="none";
+  const fields={groom:"groom",bride:"bride",date:"date",time:"time",venue:"venue",phone:"phone",maps:"maps",message:"message",style:"style"};
+  Object.entries(fields).forEach(([key,id])=>{if(params.has(key) && $(id)) $(id).value=params.get(key);});
+  const lang=params.get("lang");
+  if(lang){
+    const radio=document.querySelector('input[name="lang"][value="'+lang+'"]');
+    if(radio) radio.checked=true;
+  }
+  document.title="معاينة دعوة زفاف - "+read().groom+" و "+read().bride;
+  updateCustomerInvitation();
 }
 
 }
