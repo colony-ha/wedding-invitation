@@ -484,31 +484,34 @@ if(params.has("id")){
 }
 
 document.querySelector(".topbar").style.display="none";
-
 document.querySelector(".workspace > section.panel:first-child").style.display="none";
-
 document.querySelector(".features").style.display="none";
-
-/* Public demo: show the 12 invitation designs vertically, without maker controls */
-document.querySelector(".workspace").style.display="none";
-
-document.querySelector(".gallery").style.display="block";
-
-document.querySelector(".gallery").style.maxWidth="760px";
-document.querySelector(".gallery").style.margin="18px auto";
-document.querySelector(".gallery").style.padding="18px";
-document.querySelector(".gallery").style.background="#101b29";
-document.querySelector(".gallery").style.border="1px solid #b88b43";
-document.querySelector(".gallery").style.borderRadius="14px";
-document.querySelector(".gallery-head").style.display="block";
-document.querySelector(".gallery-head").style.textAlign="center";
-document.querySelector(".gallery-head h2").textContent="اكتشف 12 تصميماً مختلفاً لدعوات الزفاف";
-document.querySelector(".gallery-head span").textContent="12 نمطاً متنوعاً لتختار منها ما يناسب ذوقك";
-
 document.querySelector("main").style.maxWidth="800px";
 document.querySelector("main").style.padding="12px";
 document.body.style.background="#080d14";
 document.body.style.color="#fff";
+
+if(params.has("id")){
+  /* Customer invitation link: show only the selected invitation preview */
+  document.querySelector(".workspace").style.display="block";
+  document.querySelector(".workspace").style.gridTemplateColumns="1fr";
+  document.querySelector(".preview-panel").style.display="block";
+  document.querySelector(".gallery").style.display="none";
+}else{
+  /* Public demo without an invitation ID: show all 12 designs */
+  document.querySelector(".workspace").style.display="none";
+  document.querySelector(".gallery").style.display="block";
+  document.querySelector(".gallery").style.maxWidth="760px";
+  document.querySelector(".gallery").style.margin="18px auto";
+  document.querySelector(".gallery").style.padding="18px";
+  document.querySelector(".gallery").style.background="#101b29";
+  document.querySelector(".gallery").style.border="1px solid #b88b43";
+  document.querySelector(".gallery").style.borderRadius="14px";
+  document.querySelector(".gallery-head").style.display="block";
+  document.querySelector(".gallery-head").style.textAlign="center";
+  document.querySelector(".gallery-head h2").textContent="اكتشف 12 تصميماً مختلفاً لدعوات الزفاف";
+  document.querySelector(".gallery-head span").textContent="12 نمطاً متنوعاً لتختار منها ما يناسب ذوقك";
+}
 
 }
 
