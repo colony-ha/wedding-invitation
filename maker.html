@@ -168,7 +168,15 @@ input:focus,select:focus,textarea:focus{border-color:var(--gold)}textarea{resize
 
 <div class="actions"><button class="btn primary" id="makeLink">🔗 إنشاء رابط للزبون</button></div>
 
-<div class="field" id="linkBox" hidden><label for="generatedLink">رابط الدعوة الجاهز</label><input id="generatedLink" readonly dir="ltr"><p id="linkStatus" style="font-size:11px;color:#d8ad72;line-height:1.8"></p><div class="actions"><button class="btn primary" id="copyLink">نسخ الرابط</button><button class="btn" id="openLink">فتح الدعوة</button></div><p style="font-size:11px;color:#9eacba;line-height:1.8">ابعث هذا الرابط للزبون؛ يفتح الدعوة فقط، بدون لوحة التحكم.</p></div>
+<div class="field" id="linkBox" hidden><label for="generatedLink">رابط الدعوة الجاهز</label><input id="generatedLink" readonly dir="ltr"><p id="linkStatus" style="font-size:11px;color:#d8ad72;line-height:1.8"></p><div class="actions"><button class="btn primary" id="copyLink">نسخ الرابط</button><button class="btn" id="openLink">فتح الدعوة</button></div><p style="font-size:11px;color:#9eacba;line-height:1.8">ابعث هذا الرابط للزبون؛ يفتح الدعوة فقط، بدون لوحة التحكم.</p>
+<div class="section" id="adminControls" style="margin-top:16px;border-top:1px solid #52677d;padding-top:14px">
+<h3 style="font-size:14px;color:#d8ad72;margin:0 0 10px">إدارة الدعوة (لصاحب المشروع فقط)</h3>
+<div class="field"><label for="adminInvitationId">رقم الدعوة (ID)</label><input id="adminInvitationId" dir="ltr" placeholder="يُملأ تلقائياً بعد إنشاء الرابط"></div>
+<div class="field"><label for="adminToken">رمز الإدارة السري</label><input id="adminToken" type="password" autocomplete="off" placeholder="أدخل رمز الإدارة الموجود في Cloudflare"></div>
+<div class="actions"><button class="btn primary" id="activateInvitation">✓ تفعيل بعد الدفع</button><button class="btn" id="cancelInvitation">✕ إلغاء الرابط</button></div>
+<p id="adminStatus" style="font-size:11px;color:#d8ad72;line-height:1.8"></p>
+<p style="font-size:11px;color:#9eacba;line-height:1.8">لا تشارك رمز الإدارة مع الزبائن. التفعيل يمنح الرابط صلاحية 30 يوماً، ويمكن إلغاؤه حتى بعد التفعيل.</p>
+</div></div>
 
 <p style="font-size:11px;color:#9eacba;line-height:1.8">تقدر تبدّل المعلومات والتصميم قبل التحميل. الملف الناتج مستقل وما يحتاجش إنترنت لعرضه.</p>
 
@@ -374,6 +382,7 @@ try{
   url.searchParams.set("id",result.id);
 
   const longUrl=url.href;
+  $("adminInvitationId").value=result.id;
   let finalUrl=longUrl;
   const status=$("linkStatus");
   status.textContent="تم حفظ الدعوة. جاري اختصار الرابط...";
@@ -403,6 +412,35 @@ try{
 }
 
 });
+
+async function adminAction(action){
+  const id=$("adminInvitationId").value.trim();
+  const token=$("adminToken").value.trim();
+  const status=$("adminStatus");
+  const btn=action==="activate"?$("activateInvitation"):$("cancelInvitation");
+  if(!id){status.textContent="أدخل رقم الدعوة أولاً.";return;}
+  if(!token){status.textContent="أدخل رمز الإدارة السري أولاً.";return;}
+  if(action==="cancel" && !confirm("هل أنت متأكد من إلغاء هذا الرابط؟ لن يستطيع الزبون فتحه بعد الإلغاء.")) return;
+  const original=btn.textContent;
+  btn.disabled=true;btn.textContent="جارٍ التنفيذ...";
+  status.textContent="";
+  try{
+    const response=await fetch(API_BASE+"/api/admin/"+action,{
+      method:"POST",
+      headers:{"Content-Type":"application/json","Authorization":"Bearer "+token},
+      body:JSON.stringify({id})
+    });
+    const result=await response.json();
+    if(!response.ok || !result.success) throw new Error(result.error || result.message || "فشلت العملية");
+    status.textContent=action==="activate"?"تم تفعيل الدعوة لمدة 30 يوماً بنجاح ✓":"تم إلغاء الرابط بنجاح ✓";
+  }catch(error){
+    status.textContent="فشلت العملية: "+error.message;
+  }finally{
+    btn.disabled=false;btn.textContent=original;
+  }
+}
+$("activateInvitation").addEventListener("click",()=>adminAction("activate"));
+$("cancelInvitation").addEventListener("click",()=>adminAction("cancel"));
 
 $("copyLink").addEventListener("click",async()=>{
 
