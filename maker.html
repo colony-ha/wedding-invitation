@@ -320,6 +320,19 @@ tick();setInterval(tick,1000);
 
 function update(){const d=read();$("preview").srcdoc=invitation(d);$("currentName").textContent=defs[d.style].name;document.querySelectorAll(".template").forEach(el=>el.classList.toggle("active",el.dataset.style===d.style));}
 
+function updateCustomerInvitation(){
+  const d=read();
+  let html=invitation(d);
+  const fullPageStyle=`<style>
+html,body{width:100%;min-height:100%;margin:0!important;padding:0!important}
+body{display:block!important}
+.card{width:100%!important;max-width:none!important;min-height:100vh!important;height:auto!important;margin:0!important;border-radius:0!important;padding:clamp(28px,6vh,64px) clamp(18px,6vw,60px)!important;box-shadow:none!important}
+</style>`;
+  html=html.replace("</head>",fullPageStyle+"</head>");
+  $("preview").srcdoc=html;
+  $("currentName").textContent=defs[d.style].name;
+}
+
 function makeGallery(){const holder=$("cards");Object.entries(defs).forEach(([id,s],i)=>{const b=document.createElement("button");b.type="button";b.className="template";b.dataset.style=id;b.innerHTML=`<div class="mini" style="--ac:${s.a};--paper:${s.bg};--ink:${s.ink}"><div class="fl"><div class="orn">${s.motif}</div><div>دعوة زفاف</div><div class="mn">اسم العريس ♥ اسم العروس</div><div>التاريخ · الساعة</div><div>مكان الحفل</div><div class="orn">♡ ♡ ♡</div></div></div><small>${i+1}. ${s.name}</small>`;b.addEventListener("click",()=>{$("style").value=id;update();});holder.appendChild(b);});}
 
 document.querySelectorAll("input,select,textarea").forEach(el=>el.addEventListener("input",update));
@@ -474,7 +487,7 @@ if(params.has("id")){
         if(radio) radio.checked=true;
       }
       document.title="دعوة زفاف - "+(saved.groom||"")+" و "+(saved.bride||"");
-      update();
+      updateCustomerInvitation();
     }catch(error){
       document.querySelector(".preview-frame").innerHTML='<div style="padding:40px 20px;text-align:center;color:#333;font-family:Tahoma,Arial,sans-serif;line-height:2"><h2>تعذر فتح الدعوة</h2><p>'+esc(error.message)+'</p><p>قد يكون الرابط غير صحيح أو انتهت صلاحيته.</p></div>';
     }
